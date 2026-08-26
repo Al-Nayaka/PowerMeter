@@ -29,7 +29,7 @@ char bufferPowerFactor[5];
 unsigned long prevMillis;
 
 //Wifi Config
-const char* ssid = "LABKOMJAR";
+const char* ssid = "LABKOMDJAR";
 const char* password = "acdepanlab2";
 
 //MQTT Config
@@ -109,12 +109,14 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
   Serial.println();
 
-  if ((char)payload[0] == '1') {
+  if ((char)payload[0] == '0') {
     digitalWrite(RELAY_PIN, HIGH);
+    digitalWrite(LED_PIN, LOW);
     Serial.println("[RELAY] NYALA");
   } 
-  else if((char)payload[0] == '0') {
+  else if((char)payload[0] == '1') {
     digitalWrite(RELAY_PIN, LOW);
+    digitalWrite(LED_PIN, HIGH);
     Serial.println("[RELAY] MATI");
   }
 }

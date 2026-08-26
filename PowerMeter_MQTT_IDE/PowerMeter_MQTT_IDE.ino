@@ -30,7 +30,7 @@ char bufferPowerFactor[5];
 unsigned long prevMillis;
 
 //Wifi Config
-const char* ssid = "LABKOMJAR";
+const char* ssid = "LABKOMDJAR";
 const char* password = "acdepanlab2";
 
 //MQTT Config
@@ -170,7 +170,7 @@ void setup() {
   setup_wifi();
   // while (WiFi.status() != WL_CONNECTED) { delay(500); }
   // Serial.println(WiFi.localIP());
-  ArduinoOTA.setHostname("myesp32");
+  ArduinoOTA.setHostname("apdwpa");
   ArduinoOTA.begin();
 
   mqtt.setServer(mqtt_server, 1883);
@@ -210,7 +210,8 @@ void loop() {
     mqtt.loop();
   }
 
-  if (millis() - prevMillis >= intervalPengiriman*1000) {
+  unsigned long currentMillis = millis();
+  if (currentMillis - prevMillis >= intervalPengiriman*1000) {
     activePower = hlw8012.getActivePower();
     voltage = hlw8012.getVoltage();
     current = hlw8012.getCurrent();
@@ -231,7 +232,7 @@ void loop() {
       publish_data();
     }
 
-    prevMillis = millis();
+    prevMillis = currentMillis;
   }
   //millis(5);
 }

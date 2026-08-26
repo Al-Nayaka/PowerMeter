@@ -23,16 +23,16 @@
 
 //HLW8012 Variables
 float activePower, voltage, current, apparentPower, powerFactor;
-char bufferActivePower[5];
-char bufferVoltage[5];
-char bufferCurrent[5];
-char bufferApparentPower[5];
-char bufferPowerFactor[5];
+char bufferActivePower[16];
+char bufferVoltage[16];
+char bufferCurrent[16];
+char bufferApparentPower[16];
+char bufferPowerFactor[16];
 unsigned long prevMillis;
 
 //Wifi Config
-const char* ssid = "LABKOMJAR";
-const char* password = "acdepanlab2";
+const char* ssid = "V";
+const char* password = "528491Vian";
 
 //MQTT Config
 const char* mqtt_server = "broker.emqx.io";
@@ -244,7 +244,8 @@ void loop() {
     mqtt.loop();
   }
 
-  if (millis() - prevMillis >= intervalPengiriman*1000) {
+  unsigned long currentMillis = millis();
+  if (currentMillis - prevMillis >= intervalPengiriman*1000) {
     activePower = hlw8012.getActivePower();
     voltage = hlw8012.getVoltage();
     current = hlw8012.getCurrent();
@@ -265,7 +266,7 @@ void loop() {
       publish_data();
     }
 
-    prevMillis = millis();
+    prevMillis = currentMillis;
   }
   //millis(5);
 }
