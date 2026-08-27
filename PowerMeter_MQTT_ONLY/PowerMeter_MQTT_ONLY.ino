@@ -21,16 +21,16 @@
 
 //HLW8012 Variables
 float activePower, voltage, current, apparentPower, powerFactor;
-char bufferActivePower[5];
-char bufferVoltage[5];
-char bufferCurrent[5];
-char bufferApparentPower[5];
-char bufferPowerFactor[5];
+char bufferActivePower[12];
+char bufferVoltage[12];
+char bufferCurrent[12];
+char bufferApparentPower[12];
+char bufferPowerFactor[12];
 unsigned long prevMillis;
 
 //Wifi Config
 const char* ssid = "LABKOMDJAR";
-const char* password = "acdepanlab2";
+const char* password = "";
 
 //MQTT Config
 const char* mqtt_server = "broker.emqx.io";

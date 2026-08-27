@@ -22,25 +22,25 @@
 
 //HLW8012 Variables
 float activePower, voltage, current, apparentPower, powerFactor;
-char bufferActivePower[5];
-char bufferVoltage[5];
-char bufferCurrent[5];
-char bufferApparentPower[5];
-char bufferPowerFactor[5];
+char bufferActivePower[12];
+char bufferVoltage[12];
+char bufferCurrent[12];
+char bufferApparentPower[12];
+char bufferPowerFactor[12];
 unsigned long prevMillis;
 
 //Wifi Config
 const char* ssid = "LABKOMDJAR";
-const char* password = "acdepanlab2";
+const char* password = "";
 
 //MQTT Config
 const char* mqtt_server = "broker.emqx.io";
-const char* TOPIC_activePower = "powermeter/activePower";
-const char* TOPIC_voltage = "powermeter/voltage";
-const char* TOPIC_current = "powermeter/current";
-const char* TOPIC_apparentPower = "powermeter/apparentPower";
-const char* TOPIC_powerFactor = "powermeter/powerFactor";
-const char* TOPIC_relay = "powermeter/relay";
+const char* TOPIC_activePower = "powermeter/01/activePower";
+const char* TOPIC_voltage = "powermeter/01/voltage";
+const char* TOPIC_current = "powermeter/01/current";
+const char* TOPIC_apparentPower = "powermeter/01/apparentPower";
+const char* TOPIC_powerFactor = "powermeter/01/powerFactor";
+const char* TOPIC_relay = "powermeter/01/relay";
 int intervalPengiriman = 5; // satuan detik
 
 //Objects

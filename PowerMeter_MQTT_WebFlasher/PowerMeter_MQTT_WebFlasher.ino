@@ -23,25 +23,25 @@
 
 //HLW8012 Variables
 float activePower, voltage, current, apparentPower, powerFactor;
-char bufferActivePower[16];
-char bufferVoltage[16];
-char bufferCurrent[16];
-char bufferApparentPower[16];
-char bufferPowerFactor[16];
+char bufferActivePower[12];
+char bufferVoltage[12];
+char bufferCurrent[12];
+char bufferApparentPower[12];
+char bufferPowerFactor[12];
 unsigned long prevMillis;
 
 //Wifi Config
 const char* ssid = "V";
-const char* password = "528491Vian";
+const char* password = "";
 
 //MQTT Config
 const char* mqtt_server = "broker.emqx.io";
-const char* TOPIC_activePower = "powermeter/activePower";
-const char* TOPIC_voltage = "powermeter/voltage";
-const char* TOPIC_current = "powermeter/current";
-const char* TOPIC_apparentPower = "powermeter/apparentPower";
-const char* TOPIC_powerFactor = "powermeter/powerFactor";
-const char* TOPIC_relay = "powermeter/relay";
+const char* TOPIC_activePower = "powermeter/01/activePower";
+const char* TOPIC_voltage = "powermeter/01/voltage";
+const char* TOPIC_current = "powermeter/01/current";
+const char* TOPIC_apparentPower = "powermeter/01/apparentPower";
+const char* TOPIC_powerFactor = "powermeter/01/powerFactor";
+const char* TOPIC_relay = "powermeter/01/relay";
 int intervalPengiriman = 5; // satuan detik
 
 //Objects
@@ -126,11 +126,11 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
   Serial.println();
 
-  if ((char)payload[0] == '1') {
+  if ((char)payload[0] == '0') {
     digitalWrite(RELAY_PIN, HIGH);
     Serial.println("[RELAY] NYALA");
   } 
-  else if((char)payload[0] == '0') {
+  else if((char)payload[0] == '1') {
     digitalWrite(RELAY_PIN, LOW);
     Serial.println("[RELAY] MATI");
   }
@@ -232,7 +232,7 @@ void setup() {
     VOLTAGE_RESISTOR_DOWNSTREAM
   );
 
-  //calibrate();
+  calibrate();
 }
 
 void loop() {
