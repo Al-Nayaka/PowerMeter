@@ -22,7 +22,7 @@
 #define VOLTAGE_RESISTOR_DOWNSTREAM (1000)      // 1k
 
 //HLW8012 Variables
-float activePower, voltage, current, apparentPower, powerFactor;
+double activePower, voltage, current, apparentPower, powerFactor;
 char bufferActivePower[12];
 char bufferVoltage[12];
 char bufferCurrent[12];
@@ -164,19 +164,19 @@ void reconnect() {
 
 //Data Publish to MQTT
 void publish_data() {
-  sprintf(bufferActivePower, "%.1f", activePower);
+  sprintf(bufferActivePower, "%.3f", activePower);
   mqtt.publish(TOPIC_activePower , bufferActivePower);
 
   sprintf(bufferVoltage, "%.1f", voltage);
   mqtt.publish(TOPIC_voltage, bufferVoltage);
 
-  sprintf(bufferCurrent, "%.1f", current);
+  sprintf(bufferCurrent, "%.3f", current);
   mqtt.publish(TOPIC_current, bufferCurrent);
 
-  sprintf(bufferApparentPower, "%.1f", apparentPower);
+  sprintf(bufferApparentPower, "%.3f", apparentPower);
   mqtt.publish(TOPIC_apparentPower, bufferApparentPower);
 
-  sprintf(bufferPowerFactor, "%.1f", powerFactor);
+  sprintf(bufferPowerFactor, "%.3f", powerFactor);
   mqtt.publish(TOPIC_powerFactor, bufferPowerFactor);
 }
 
@@ -213,7 +213,7 @@ void setup() {
   //GPIO Setup
   pinMode(RELAY_PIN, OUTPUT);
   pinMode(LED_PIN, OUTPUT);
-  digitalWrite(RELAY_PIN, HIGH);   // Relay default OFF
+  digitalWrite(RELAY_PIN, LOW);   // Relay default OFF
   digitalWrite(LED_PIN, LOW);   // LED default OFF
 
   //HLW8012 Setup
