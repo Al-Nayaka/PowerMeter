@@ -1,4 +1,5 @@
 #include <WiFi.h>
+#include <WiFiManager.h>
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 #include <HLW8012.h>
@@ -31,8 +32,8 @@ char bufferPowerFactor[12];
 unsigned long prevMillis;
 
 //Wifi Config
-const char* ssid = "V";
-const char* password = "";
+// const char* ssid = "V";
+// const char* password = "";
 
 //MQTT Config
 const char* mqtt_server = "broker.emqx.io";
@@ -42,6 +43,7 @@ const char* TOPIC_current = "powermeter/01/current";
 const char* TOPIC_apparentPower = "powermeter/01/apparentPower";
 const char* TOPIC_powerFactor = "powermeter/01/powerFactor";
 const char* TOPIC_relay = "powermeter/01/relay";
+const char* TOPIC_json = "powermeter/01/json";
 int intervalPengiriman = 5; // satuan detik
 
 //Objects
@@ -67,21 +69,47 @@ const char INDEX_HTML[] PROGMEM = R"HTML(
 //Wifi Setup func
 void setup_wifi() {
   delay(10);
-  Serial.println();
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
+  // Serial.println();
+  // Serial.print("Connecting to ");
+  // Serial.println(ssid);
 
   WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
+  // WiFi.begin(ssid, password);
 
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
+  // while (WiFi.status() != WL_CONNECTED) {
+  //   delay(500);
+  //   Serial.print(".");
+  // }
+  // Serial.println("");
+  // Serial.println("WiFi Terhubung");
+  // Serial.println("IP address: ");
+  // Serial.println(WiFi.localIP());
+
+  WiFiManager wfm;
+  wfm.setDebugOutput(false);
+  wfm.resetSettings();
+
+  String localIP = WiFi.localIP().toString();
+  WiFiManagerParameter ESP1LocalIP("LocalIP", "WIFI LOCAL IP", localIP.c_str(), 50, "read-only");
+  wfm.addParameter(&ESP1LocalIP);
+
+  if (!wfm.autoConnect("ESP32TEST_AP", "password")) {
+    // Did not connect, print error message
+    Serial.println("failed to connect and hit timeout");
+ 
+    // Reset and try again
+    ESP.restart();
+    delay(1000);
   }
-  Serial.println("");
-  Serial.println("WiFi Terhubung");
-  Serial.println("IP address: ");
+ 
+  // Connected!
+  Serial.println("WiFi connected");
+  Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
+  
+  // Print custom text box value to serial monitor
+  Serial.print("Custom text box entry: ");
+  Serial.println(ESP1LocalIP.getValue());
 }
 
 //HLW8012 Callibration
@@ -180,6 +208,26 @@ void publish_data() {
   mqtt.publish(TOPIC_powerFactor, bufferPowerFactor);
 }
 
+void publish_json() {
+  char json[256];
+  JsonDocument doc;
+
+  sprintf(bufferActivePower, "%.3f", activePower);
+  sprintf(bufferVoltage, "%.1f", voltage);
+  sprintf(bufferCurrent, "%.3f", current);
+  sprintf(bufferApparentPower, "%.3f", apparentPower);
+  sprintf(bufferPowerFactor, "%.3f", powerFactor);
+
+  doc["activePower"] = bufferActivePower;
+  doc["voltage"] = bufferVoltage;
+  doc["current"] = bufferCurrent;
+  doc["apparentPower"] = bufferApparentPower;
+  doc["powerFactor"] = bufferPowerFactor;
+
+  serializeJson(doc, json);
+  mqtt.publish(TOPIC_json, json);
+}
+
 void setup() {
   //WIFI Flash ***Dont  Touch***
   Serial.begin(115200);
@@ -264,6 +312,7 @@ void loop() {
     //publish_json();
      if (mqtt.connected()) {
       publish_data();
+      publish_json();
     }
 
     prevMillis = currentMillis;
