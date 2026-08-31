@@ -37,13 +37,13 @@ unsigned long prevMillis;
 
 //MQTT Config
 const char* mqtt_server = "broker.emqx.io";
-const char* TOPIC_activePower = "powermeter/01/activePower";
-const char* TOPIC_voltage = "powermeter/01/voltage";
-const char* TOPIC_current = "powermeter/01/current";
-const char* TOPIC_apparentPower = "powermeter/01/apparentPower";
-const char* TOPIC_powerFactor = "powermeter/01/powerFactor";
-const char* TOPIC_relay = "powermeter/01/relay";
-const char* TOPIC_json = "powermeter/01/json";
+const char* TOPIC_activePower = "powermeter/02/activePower";
+const char* TOPIC_voltage = "powermeter/02/voltage";
+const char* TOPIC_current = "powermeter/02/current";
+const char* TOPIC_apparentPower = "powermeter/02/apparentPower";
+const char* TOPIC_powerFactor = "powermeter/02/powerFactor";
+const char* TOPIC_relay = "powermeter/02/relay";
+const char* TOPIC_json = "powermeter/02/json";
 int intervalPengiriman = 5; // satuan detik
 
 //Objects
@@ -86,12 +86,9 @@ void setup_wifi() {
   // Serial.println(WiFi.localIP());
 
   WiFiManager wfm;
-  wfm.setDebugOutput(false);
+  wfm.setDebugOutput(true);
   wfm.resetSettings();
-
-  String localIP = WiFi.localIP().toString();
-  WiFiManagerParameter ESP1LocalIP("LocalIP", "WIFI LOCAL IP", localIP.c_str(), 50, "read-only");
-  wfm.addParameter(&ESP1LocalIP);
+  // wfm.setConfigPortalTimeout(180);
 
   if (!wfm.autoConnect("ESP32TEST_AP", "password")) {
     // Did not connect, print error message
@@ -101,15 +98,19 @@ void setup_wifi() {
     ESP.restart();
     delay(1000);
   }
- 
+
   // Connected!
   Serial.println("WiFi connected");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
   
-  // Print custom text box value to serial monitor
+  String localIP = WiFi.localIP().toString();
+  WiFiManagerParameter ESPLocalIP("LocalIP", "WIFI LOCAL IP", localIP.c_str(), 50, "read-only");
+  wfm.addParameter(&ESPLocalIP);  
+  
+  // // Print custom text box value to serial monitor
   Serial.print("Custom text box entry: ");
-  Serial.println(ESP1LocalIP.getValue());
+  Serial.println(ESPLocalIP.getValue());
 }
 
 //HLW8012 Callibration
@@ -230,7 +231,7 @@ void publish_json() {
 
 void setup() {
   //WIFI Flash ***Dont  Touch***
-  Serial.begin(115200);
+  Serial.begin(SERIAL_BAUDRATE);
   setup_wifi();
   // while (WiFi.status() != WL_CONNECTED) { delay(500); }
   // Serial.println(WiFi.localIP());
@@ -311,7 +312,7 @@ void loop() {
 
     //publish_json();
      if (mqtt.connected()) {
-      publish_data();
+      // publish_data();
       publish_json();
     }
 
